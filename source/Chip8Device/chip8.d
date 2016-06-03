@@ -1,30 +1,21 @@
-alias Memory = ubyte*;
+import cpu;
 
-//TODO: Implement these types.
-alias Timer = ubyte;
-alias Display = ubyte;
+immutable size_t memSize = 4 * 1024;
+immutable size_t progStart = 0x200;
 
 struct Chip8Device
 {
 private:
-    CPU cpu;
-    Memory memory;
+    CPU _cpu;
+    Display _display;
 
 public:
+    ubyte[] _memory;
+
     this(ubyte[] rom)
     {
-        // TODO
+        _memory = new ubyte[memSize];
+        _memory[progStart .. progStart+rom.length] = rom[];
+        _cpu = new CPU(this);
     }
-}
-
-struct CPU
-{
-private:
-    // Program Counter
-    ushort reg_pc;
-    ubyte reg_data[16];
-    ushort reg_addr;
-    Timer reg_buzzer;
-    Timer reg_delay;
-    Display disp;
 }
