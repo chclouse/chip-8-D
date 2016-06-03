@@ -1,0 +1,5 @@
+name "chip-8-d"
+description "A CHIP-8 emulator written in D."
+copyright "Copyright © 2016, Christopher Clouse"
+authors "Christopher Clouse"
+targetPath "target/"
