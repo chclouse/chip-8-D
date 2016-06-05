@@ -1,5 +1,8 @@
 import cpu;
 
+//TODO: Implement display.
+alias Display = ubyte;
+
 immutable size_t memSize = 4 * 1024;
 immutable size_t progStart = 0x200;
 
@@ -10,12 +13,12 @@ private:
     Display _display;
 
 public:
-    ubyte[] _memory;
+    ubyte[] memory;
 
     this(ubyte[] rom)
     {
-        _memory = new ubyte[memSize];
-        _memory[progStart .. progStart+rom.length] = rom[];
+        memory = new ubyte[memSize];
+        memory[progStart .. progStart+rom.length] = rom[];
         _cpu = new CPU(this);
     }
 }
