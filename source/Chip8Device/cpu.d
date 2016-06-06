@@ -1,3 +1,5 @@
+import std.stdio;
+import std.string;
 import chip8;
 import instruction;
 
@@ -45,18 +47,41 @@ public:
                         }
                         break;
                     default:
-                        assert(0, "Unrecognized syscall.");
+                        assert(0, format("Unrecognized syscall: %4x",
+                            instruction.instruction));
                 }
                 break;
+            case 0x1:
+                // Unconditional jump
+                _regPc = instruction.addr;
+                break;
+            case 0x6:
+                // LD Vx, imm
+                _regData[instruction.regX] = instruction.immediate;
+                break;
+            case 0xA:
+                // LD I, addr
+                _regAddr = instruction.addr;
+                break;
             default:
-                assert(0, "Unrecognized instruction.");
+                assert(0, format("Unrecognized instruction: %4x",
+                    instruction.instruction));
         }
     }
 
     void step()
     {
-        Instruction instruction = Instruction(_parent.memory[_regPc.._regPc+1]);
+        Instruction instruction = Instruction(_parent.memory[_regPc.._regPc+2]);
+        writefln("0x%4x: %4x", _regPc, instruction.instruction);
         _regPc += 2;
         runInstruction(instruction);
+    }
+
+    void run(size_t len)
+    {
+        while (progStart <= _regPc && _regPc <= (progStart+len))
+        {
+            step();
+        }
     }
 }

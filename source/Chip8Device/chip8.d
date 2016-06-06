@@ -21,4 +21,9 @@ public:
         memory[progStart .. progStart+rom.length] = rom[];
         _cpu = new CPU(this);
     }
+
+    void run(size_t len)
+    {
+        _cpu.run(len);
+    }
 }

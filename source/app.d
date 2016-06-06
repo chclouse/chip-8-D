@@ -7,4 +7,5 @@ void main(string[] args)
     string rom_filename = args[1];
     ubyte[] rom = cast(ubyte[])read(args[1]);
     auto chip8 = Chip8Device(rom);
+    chip8.run(rom.length);
 }

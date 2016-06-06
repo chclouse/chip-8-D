@@ -29,6 +29,7 @@ struct Instruction
 
     this(ubyte[] ins)
     {
+        assert(ins.length == 2);
         instruction = (ins[0]<<8) | ins[1];
     }
 
