@@ -47,7 +47,7 @@ public:
                         }
                         break;
                     default:
-                        assert(0, format("Unrecognized syscall: %4x",
+                        assert(0, format("Unrecognized syscall: %04x",
                             instruction.instruction));
                 }
                 break;
@@ -63,8 +63,22 @@ public:
                 // LD I, addr
                 _regAddr = instruction.addr;
                 break;
+            case 0xF:
+                // IO/Multiload
+                switch (instruction.immediate)
+                {
+                    case 0x55:
+                        // LD [I], Vx
+                        _parent.memory[_regAddr .. _regAddr+instruction.regX+1] =
+                            _regData[0 .. instruction.regX+1];
+                        break;
+                    default:
+                        assert(0, format("Unrecognized instruction: %04x",
+                            instruction.instruction));
+                }
+                break;
             default:
-                assert(0, format("Unrecognized instruction: %4x",
+                assert(0, format("Unrecognized instruction: %04x",
                     instruction.instruction));
         }
     }
@@ -72,7 +86,7 @@ public:
     void step()
     {
         Instruction instruction = Instruction(_parent.memory[_regPc.._regPc+2]);
-        writefln("0x%4x: %4x", _regPc, instruction.instruction);
+        writefln("0x%04x: %04x", _regPc, instruction.instruction);
         _regPc += 2;
         runInstruction(instruction);
     }
