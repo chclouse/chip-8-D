@@ -38,3 +38,16 @@ struct Instruction
         instruction = ins;
     }
 }
+
+pure ubyte[] getBCDRepresentation(ubyte value)
+out (result)
+{
+    assert(result.length == 3);
+}
+body
+{
+    ubyte hundreds = value / 100;
+    ubyte tens = (value / 10) % 10;
+    ubyte ones = value % 10;
+    return [hundreds, tens, ones];
+}

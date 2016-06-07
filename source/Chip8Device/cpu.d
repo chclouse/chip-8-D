@@ -13,7 +13,7 @@ private:
     ubyte _regData[16];
     ushort _regAddr;
     ushort _callStack[16];
-    ubyte _regSp;
+    byte _regSp = -1;
     Timer _regBuzzer;
     Timer _regDelay;
 
@@ -55,6 +55,15 @@ public:
                 // Unconditional jump
                 _regPc = instruction.addr;
                 break;
+            case 0x2:
+                // Call
+                if (_regSp < 16)
+                {
+                    _regSp++;
+                    _callStack[_regSp] = _regPc;
+                    _regPc = instruction.addr;
+                }
+                break;
             case 0x6:
                 // LD Vx, imm
                 _regData[instruction.regX] = instruction.immediate;
@@ -67,6 +76,11 @@ public:
                 // IO/Multiload
                 switch (instruction.immediate)
                 {
+                    case 0x33:
+                        // LD B, Vx
+                        ubyte[] bcd = getBCDRepresentation(_regData[instruction.regX]);
+                        _parent.memory[_regAddr .. _regAddr+3] = bcd;
+                        break;
                     case 0x55:
                         // LD [I], Vx
                         _parent.memory[_regAddr .. _regAddr+instruction.regX+1] =
