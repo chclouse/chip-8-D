@@ -1,7 +1,5 @@
 import cpu;
-
-//TODO: Implement display.
-alias Display = ubyte;
+import display;
 
 immutable size_t memSize = 4 * 1024;
 immutable size_t progStart = 0x200;
@@ -25,5 +23,10 @@ public:
     void run(size_t len)
     {
         _cpu.run(len);
+    }
+
+    void clearDisplay()
+    {
+        _display.clear();
     }
 }

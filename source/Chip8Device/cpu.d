@@ -36,7 +36,7 @@ public:
                 {
                     case 0x00E0:
                         // Clear screen
-                        //_parent.clearScreen(); //TODO: Implement.
+                        _parent.clearDisplay();
                         break;
                     case 0x0EE0:
                         // Return from function
