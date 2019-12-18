@@ -20,3 +20,5 @@ target
 docs.json
 dub.selections.json
 __dummy.html
+
+.vscode/

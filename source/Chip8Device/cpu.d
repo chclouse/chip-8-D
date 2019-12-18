@@ -10,17 +10,17 @@ class CPU
 {
 private:
     ushort _regPc;
-    ubyte _regData[16];
+    ubyte[16] _regData;
     ushort _regAddr;
-    ushort _callStack[16];
+    ushort[16] _callStack;
     byte _regSp = -1;
     Timer _regBuzzer;
     Timer _regDelay;
 
-    Chip8Device _parent;
+    Chip8Device* _parent;
 
 public:
-    this(Chip8Device parent)
+    this(Chip8Device* parent)
     {
         _parent = parent;
         _regPc = progStart;
@@ -64,6 +64,16 @@ public:
                     _regPc = instruction.addr;
                 }
                 break;
+            case 0x3:
+                // Skip the next instruction if Vx == imm
+                if (_regData[instruction.regX] == instruction.immediate)
+                    _regPc += 2;
+                break;
+            case 0x4:
+                // Skip the next instruction if Vx != imm
+                if (_regData[instruction.regX] != instruction.immediate)
+                    _regPc += 2;
+                break;
             case 0x6:
                 // LD Vx, imm
                 _regData[instruction.regX] = instruction.immediate;
@@ -76,6 +86,14 @@ public:
                 // IO/Multiload
                 switch (instruction.immediate)
                 {
+                    case 0x1E:
+                        // ADD I, Vx
+                        _regAddr += _regData[instruction.regX];
+                        break;
+                    case 0x29:
+                        // LD F, Vx
+                        _regAddr = numberSpriteAddresses[instruction.regX];
+                        break;
                     case 0x33:
                         // LD B, Vx
                         ubyte[] bcd = getBCDRepresentation(_regData[instruction.regX]);
@@ -85,6 +103,11 @@ public:
                         // LD [I], Vx
                         _parent.memory[_regAddr .. _regAddr+instruction.regX+1] =
                             _regData[0 .. instruction.regX+1];
+                        break;
+                    case 0x65:
+                        // LD Vx, [I]
+                        _regData[0 .. instruction.regX+1] =
+                            _parent.memory[_regAddr .. _regAddr+instruction.regX+1];
                         break;
                     default:
                         assert(0, format("Unrecognized instruction: %04x",
